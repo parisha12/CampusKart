@@ -1,31 +1,25 @@
-const products = [
-  {
-    id: 1,
-    name: "Engineering Mathematics Book",
-    price: "Rs. 700",
-    condition: "Used",
-  },
-  {
-    id: 2,
-    name: "Dell Laptop",
-    price: "Rs. 35,000",
-    condition: "Used",
-  },
-  {
-    id: 3,
-    name: "Scientific Calculator",
-    price: "Rs. 1,200",
-    condition: "Like New",
-  },
-  {
-    id: 4,
-    name: "Study Table",
-    price: "Rs. 2,500",
-    condition: "Good",
-  },
-];
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getProducts } from '../../services/productService';
 
 function FeaturedProducts() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+
+        // show only first 4 products as featured
+        setProducts(data.slice(0, 4));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <section className="bg-slate-100 py-16">
       <div className="max-w-7xl mx-auto px-6">
@@ -36,24 +30,32 @@ function FeaturedProducts() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <div
-              key={product.id}
+              key={product._id}
               className="bg-white rounded-xl shadow-md p-5"
             >
               <div className="bg-gray-200 h-40 rounded-lg mb-4 flex items-center justify-center">
-                Product Image
+                {product.image ? (
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="h-full w-full object-cover rounded-lg"
+                  />
+                ) : (
+                  'Product Image'
+                )}
               </div>
 
-              <h3 className="font-bold">{product.name}</h3>
+              <h3 className="font-bold">{product.title}</h3>
 
-              <p className="text-blue-600 mt-2">{product.price}</p>
+              <p className="text-blue-600 mt-2">Rs. {product.price}</p>
 
-              <p className="text-sm text-gray-500">
-                {product.condition}
-              </p>
-
-              <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+              <p className="text-sm text-gray-500">{product.condition}</p>
+              <Link
+                to={`/products/${product._id}`}
+                className="block text-center mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              >
                 View Details
-              </button>
+              </Link>
             </div>
           ))}
         </div>

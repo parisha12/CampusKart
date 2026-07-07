@@ -86,6 +86,13 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    // Check ownership
+    if (product.seller.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: 'You can only update your own products',
+      });
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -111,6 +118,13 @@ const deleteProduct = async (req, res) => {
       });
     }
 
+    // Check ownership
+    if (product.seller.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: 'You can only delete your own products',
+      });
+    }
+
     await product.deleteOne();
 
     res.json({
@@ -122,10 +136,6 @@ const deleteProduct = async (req, res) => {
     });
   }
 };
-// @desc Get logged-in seller's products
-// @route GET /api/products/my-products
-// @access Private (Seller)
-
 const getMyProducts = async (req, res) => {
   console.log('✅ getMyProducts controller called');
   try {

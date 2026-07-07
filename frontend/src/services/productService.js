@@ -14,6 +14,13 @@ export const getProducts = async () => {
   return response.data;
 };
 
+// Get Single Product
+export const getProductById = async (id) => {
+  const response = await api.get(`/products/${id}`);
+
+  return response.data;
+};
+
 // Delete Product
 export const deleteProduct = async (id) => {
   const response = await api.delete(`/products/${id}`);
@@ -24,6 +31,13 @@ export const deleteProduct = async (id) => {
 // Update Product
 export const updateProduct = async (id, productData) => {
   const response = await api.put(`/products/${id}`, productData);
+
+  return response.data;
+};
+
+// Get My Products
+export const getMyProducts = async () => {
+  const response = await api.get('/products/my-products');
 
   return response.data;
 };
