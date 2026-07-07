@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProductById } from '../services/productService';
+import { addToCart } from '../services/cartService';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -19,6 +20,20 @@ function ProductDetails() {
 
     fetchProduct();
   }, [id]);
+
+  const handleAddToCart = async () => {
+    try {
+      const data = await addToCart(product._id, 1);
+
+      console.log('Added to cart:', data);
+
+      alert('Product added to cart');
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+
+      alert('Failed to add product');
+    }
+  };
 
   if (!product) {
     return (
@@ -91,7 +106,10 @@ function ProductDetails() {
 
           {/* Buttons */}
           <div className="flex gap-4 mt-10">
-            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold">
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
+            >
               Add to Cart
             </button>
 

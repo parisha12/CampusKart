@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import SellerDashboard from './pages/SellerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import RoleRoute from './components/RoleRoute';
+import Cart from './pages/Cart';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/seller-dashboard"
           element={
@@ -40,13 +42,12 @@ function App() {
             </RoleRoute>
           }
         />
-
         <Route
-          path="/seller-dashboard"
+          path="/cart"
           element={
-            <RoleRoute allowedRoles={['seller']}>
-              <SellerDashboard />
-            </RoleRoute>
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
           }
         />
       </Routes>
