@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getProductById } from '../services/productService';
 
 function ProductDetails() {
@@ -11,7 +11,6 @@ function ProductDetails() {
     const fetchProduct = async () => {
       try {
         const data = await getProductById(id);
-
         setProduct(data);
       } catch (error) {
         console.log(error);
@@ -22,44 +21,101 @@ function ProductDetails() {
   }, [id]);
 
   if (!product) {
-    return <div className="text-center py-10">Loading product...</div>;
+    return (
+      <div className="text-center py-20 text-xl font-semibold">
+        Loading product...
+      </div>
+    );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      <div className="grid md:grid-cols-2 gap-10">
-        {/* Product Image */}
+      <Link
+        to="/products"
+        className="inline-block mb-8 text-blue-600 hover:underline font-semibold"
+      >
+        ← Back to Marketplace
+      </Link>
 
-        <div className="bg-gray-200 h-96 rounded-xl flex items-center justify-center">
+      <div className="bg-white shadow-xl rounded-2xl overflow-hidden grid md:grid-cols-2 gap-10 p-8">
+        {/* Product Image */}
+        <div>
           {product.image ? (
             <img
               src={product.image}
               alt={product.title}
-              className="h-full w-full object-cover rounded-xl"
+              className="w-full h-[500px] object-cover rounded-xl"
             />
           ) : (
-            'Product Image'
+            <div className="w-full h-[500px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 text-xl">
+              No Image Available
+            </div>
           )}
         </div>
 
-        {/* Product Info */}
+        {/* Product Details */}
+        <div className="flex flex-col justify-between">
+          <div>
+            <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm">
+              {product.category}
+            </span>
 
-        <div>
-          <h1 className="text-4xl font-bold">{product.title}</h1>
+            <h1 className="text-4xl font-bold mt-5">{product.title}</h1>
 
-          <p className="text-2xl text-blue-600 font-semibold mt-4">
-            Rs. {product.price}
+            <p className="text-3xl font-bold text-blue-600 mt-5">
+              Rs. {product.price}
+            </p>
+
+            <div className="mt-6 space-y-3">
+              <p>
+                <span className="font-semibold">Condition:</span>{' '}
+                {product.condition}
+              </p>
+
+              <p>
+                <span className="font-semibold">Type:</span> {product.type}
+              </p>
+
+              <p>
+                <span className="font-semibold">Location:</span>{' '}
+                {product.location}
+              </p>
+            </div>
+
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-3">Description</h2>
+
+              <p className="text-gray-600 leading-7">{product.description}</p>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-4 mt-10">
+            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold">
+              Add to Cart
+            </button>
+
+            <button className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold">
+              Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Seller Information */}
+      <div className="bg-white shadow-lg rounded-2xl mt-10 p-8">
+        <h2 className="text-2xl font-bold mb-6">Seller Information</h2>
+
+        <div className="space-y-3">
+          <p>
+            <span className="font-semibold">Seller:</span>{' '}
+            {product.user?.name || 'CampusKart Seller'}
           </p>
 
-          <p className="mt-4 text-gray-600">Condition: {product.condition}</p>
-
-          <p className="mt-4 text-gray-600">Category: {product.category}</p>
-
-          <p className="mt-6">{product.description}</p>
-
-          <button className="mt-8 bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
-            Add to Cart
-          </button>
+          <p>
+            <span className="font-semibold">Email:</span>{' '}
+            {product.user?.email || 'Not Available'}
+          </p>
         </div>
       </div>
     </div>
