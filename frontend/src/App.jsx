@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
 import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -8,6 +9,10 @@ import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 import Products from './pages/Products';
 import ProductDetails from './pages/ProductDetails';
+import Profile from './pages/Profile';
+import SellerDashboard from './pages/SellerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import RoleRoute from './components/RoleRoute';
 
 function App() {
   return (
@@ -19,6 +24,31 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seller-dashboard"
+          element={
+            <RoleRoute allowedRoles={['seller']}>
+              <SellerDashboard />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/seller-dashboard"
+          element={
+            <RoleRoute allowedRoles={['seller']}>
+              <SellerDashboard />
+            </RoleRoute>
+          }
+        />
       </Routes>
     </Layout>
   );
