@@ -6,14 +6,16 @@ export const createProduct = async (productData) => {
 
   return response.data;
 };
-
-// Get Products
-export const getProducts = async () => {
-  const response = await api.get('/products');
+export const getProducts = async (search = '', category = 'All') => {
+  const response = await api.get('/products', {
+    params: {
+      search,
+      category,
+    },
+  });
 
   return response.data;
 };
-
 // Get Single Product
 export const getProductById = async (id) => {
   const response = await api.get(`/products/${id}`);

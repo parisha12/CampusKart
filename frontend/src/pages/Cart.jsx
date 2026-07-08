@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import {
   getCart,
   updateCartQuantity,
@@ -6,6 +7,7 @@ import {
 } from '../services/cartService';
 
 function Cart() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
 
   const fetchCart = async () => {
@@ -68,9 +70,7 @@ function Cart() {
 
               <div className="flex items-center gap-4 mt-4">
                 <button
-                  onClick={() =>
-                    handleDecrease(item._id, item.quantity)
-                  }
+                  onClick={() => handleDecrease(item._id, item.quantity)}
                   className="bg-gray-300 px-4 py-2 rounded"
                 >
                   -
@@ -79,9 +79,7 @@ function Cart() {
                 <span className="font-semibold">{item.quantity}</span>
 
                 <button
-                  onClick={() =>
-                    handleIncrease(item._id, item.quantity)
-                  }
+                  onClick={() => handleIncrease(item._id, item.quantity)}
                   className="bg-blue-600 text-white px-4 py-2 rounded"
                 >
                   +
@@ -93,6 +91,12 @@ function Cart() {
                 className="mt-4 bg-red-600 text-white px-4 py-2 rounded"
               >
                 Remove
+              </button>
+              <button
+                onClick={() => navigate('/checkout')}
+                className="bg-green-600 text-white px-5 py-2 rounded"
+              >
+                Checkout
               </button>
             </div>
           ))}

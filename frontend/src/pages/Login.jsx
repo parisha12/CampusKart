@@ -37,18 +37,19 @@ const Login = () => {
 
     // Clear old errors
     setErrors({});
-
     try {
+      console.log('Sending request...');
+
       const response = await api.post('/auth/login', {
         email,
         password,
       });
 
+      console.log('Login response:', response.data);
+
       alert(response.data.message);
 
       login(response.data.user, response.data.token);
-
-      console.log(response.data);
 
       if (response.data.user.role === 'seller') {
         navigate('/seller-dashboard');
@@ -58,6 +59,8 @@ const Login = () => {
         navigate('/profile');
       }
     } catch (error) {
+      console.log(error);
+
       alert(error.response?.data?.message || 'Login failed');
     }
   };
@@ -94,8 +97,6 @@ const Login = () => {
             <label className="block mb-2 font-medium">Password</label>
 
             <div className="flex items-center border rounded-lg px-3">
-              <FaLock className="text-gray-400" />
-
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter password"

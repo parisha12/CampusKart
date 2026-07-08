@@ -14,6 +14,9 @@ import SellerDashboard from './pages/SellerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import RoleRoute from './components/RoleRoute';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import MyOrders from './pages/MyOrders';
+import SellerOrders from './pages/SellerOrders';
 
 function App() {
   return (
@@ -35,6 +38,15 @@ function App() {
         />
 
         <Route
+          path="/admin-dashboard"
+          element={
+            <RoleRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </RoleRoute>
+          }
+        />
+
+        <Route
           path="/seller-dashboard"
           element={
             <RoleRoute allowedRoles={['seller']}>
@@ -50,6 +62,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/seller-orders" element={<SellerOrders />} />
       </Routes>
     </Layout>
   );

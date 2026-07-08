@@ -44,7 +44,26 @@ const createProduct = async (req, res) => {
 
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate('seller', 'name email');
+    const { search, category } = req.query;
+
+    const filter = {};
+
+    // Search by product title
+    if (search) {
+      filter.title = {
+        $regex: search,
+        $options: 'i',
+      };
+    }
+
+    // Filter by category
+    if (category && category !== 'All') {
+      filter.category = category;
+    }
+
+    const products = await Product.find(filter)
+      .populate('seller', 'name email')
+      .sort({ createdAt: -1 });
 
     res.json(products);
   } catch (error) {
