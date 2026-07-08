@@ -39,7 +39,8 @@ const MyOrders = () => {
             <div className="mt-3">
               {order.items.map((item) => (
                 <p key={item._id}>
-                  {item.product.title} x {item.quantity}
+                  {item.product?.title || 'Product unavailable'} x{' '}
+                  {item.quantity}
                 </p>
               ))}
             </div>

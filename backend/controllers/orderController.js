@@ -51,10 +51,29 @@ const getMyOrders = async (req, res) => {
     const orders = await Order.find({
       buyer: req.user.id,
     })
-      .populate('items.product')
+      .populate({
+        path: 'items.product',
+        select: 'title price image category condition',
+      })
       .sort({ createdAt: -1 });
 
-    res.json(orders);
+    const updatedOrders = orders.map((order) => {
+      return {
+        ...order.toObject(),
+        items: order.items.map((item) => ({
+          ...item.toObject(),
+          product: item.product || {
+            title: 'Product unavailable',
+            price: 0,
+            image: '',
+            category: 'N/A',
+            condition: 'N/A',
+          },
+        })),
+      };
+    });
+
+    res.json(updatedOrders);
   } catch (error) {
     res.status(500).json({
       message: error.message,

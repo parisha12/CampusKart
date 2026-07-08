@@ -15,8 +15,10 @@ import AdminDashboard from './pages/AdminDashboard';
 import RoleRoute from './components/RoleRoute';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import Wishlist from './pages/Wishlist';
 import MyOrders from './pages/MyOrders';
 import SellerOrders from './pages/SellerOrders';
+import SellerStore from './pages/SellerStore';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/seller/:id" element={<SellerStore />} />
+
         <Route
           path="/profile"
           element={
@@ -54,6 +58,7 @@ function App() {
             </RoleRoute>
           }
         />
+
         <Route
           path="/cart"
           element={
@@ -62,6 +67,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute>
+              <Wishlist />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/seller-orders" element={<SellerOrders />} />

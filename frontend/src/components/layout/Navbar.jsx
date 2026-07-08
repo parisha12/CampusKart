@@ -1,12 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FaShoppingCart, FaUserCircle } from 'react-icons/fa';
+import { FaShoppingCart, FaUserCircle, FaHeart } from 'react-icons/fa';
 
 function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  console.log('Navbar user:', user);
 
   return (
     <nav className="bg-white shadow-md">
@@ -35,17 +33,23 @@ function Navbar() {
                 Profile
               </Link>
 
-              {/* Seller Orders */}
+              {/* Buyer Links */}
+              {user.role === 'student' && (
+                <>
+                  <Link to="/wishlist" className="hover:text-red-500">
+                    Wishlist
+                  </Link>
+
+                  <Link to="/my-orders" className="hover:text-blue-600">
+                    My Orders
+                  </Link>
+                </>
+              )}
+
+              {/* Seller Links */}
               {user.role === 'seller' && (
                 <Link to="/seller-orders" className="hover:text-blue-600">
                   Orders
-                </Link>
-              )}
-
-              {/* Buyer My Orders */}
-              {user.role === 'student' && (
-                <Link to="/my-orders" className="hover:text-blue-600">
-                  My Orders
                 </Link>
               )}
 
@@ -71,15 +75,16 @@ function Navbar() {
             </>
           )}
 
-          {/* Cart visible for everyone */}
-          <Link to="/cart" className="hover:text-blue-600">
-            Cart
+          <Link to="/wishlist" className="hover:text-red-500">
+            <FaHeart className="text-2xl" />
           </Link>
 
-          <FaShoppingCart className="text-2xl cursor-pointer hover:text-blue-600" />
+          <Link to="/cart" className="hover:text-blue-600">
+            <FaShoppingCart className="text-2xl" />
+          </Link>
 
           <Link to="/profile">
-            <FaUserCircle className="text-3xl cursor-pointer hover:text-blue-600" />
+            <FaUserCircle className="text-3xl hover:text-blue-600" />
           </Link>
         </div>
       </div>

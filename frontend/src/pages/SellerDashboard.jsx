@@ -5,6 +5,7 @@ import {
   deleteProduct,
   updateProduct,
 } from '../services/productService';
+import { uploadImage } from '../services/uploadService';
 
 const SellerDashboard = () => {
   const [product, setProduct] = useState({
@@ -20,6 +21,8 @@ const SellerDashboard = () => {
 
   const [products, setProducts] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const [editId, setEditId] = useState(null);
 
@@ -46,16 +49,37 @@ const SellerDashboard = () => {
     fetchProducts();
   }, []);
 
+  const handleImageUpload = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      let imageUrl = product.image;
+
+      if (imageFile) {
+        setUploading(true);
+
+        const uploadData = await uploadImage(imageFile);
+
+        console.log('UPLOAD RESPONSE:', uploadData);
+
+        imageUrl = uploadData.imageUrl;
+      }
+      console.log('Uploaded Image URL:', imageUrl);
+      const updatedProduct = {
+        ...product,
+        image: imageUrl,
+      };
+
       let data;
 
       if (editMode) {
-        data = await updateProduct(editId, product);
+        data = await updateProduct(editId, updatedProduct);
       } else {
-        data = await createProduct(product);
+        data = await createProduct(updatedProduct);
       }
 
       console.log(data);
@@ -74,6 +98,8 @@ const SellerDashboard = () => {
         image: '',
         location: '',
       });
+
+      setImageFile(null);
       setEditMode(false);
       setEditId(null);
 
@@ -82,6 +108,8 @@ const SellerDashboard = () => {
       console.log(error);
 
       alert(editMode ? 'Failed to update product' : 'Failed to add product');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -128,7 +156,11 @@ const SellerDashboard = () => {
 
       <div className="mt-8 max-w-xl">
         <h2 className="text-2xl font-semibold mb-4">
-          {editMode ? 'Update Product' : 'Add Product'}
+          {uploading
+            ? 'Uploading Image...'
+            : editMode
+              ? 'Update Product'
+              : 'Add Product'}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -190,13 +222,10 @@ const SellerDashboard = () => {
             <option value="rent">Rent</option>
             <option value="exchange">Exchange</option>
           </select>
-
           <input
-            type="text"
-            name="image"
-            placeholder="Image URL"
-            value={product.image}
-            onChange={handleChange}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
             className="border p-2 w-full"
           />
 

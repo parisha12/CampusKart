@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
+const Review = require('../models/Review');
 
 // @desc    Add new product
 // @route   POST /api/products
@@ -41,14 +43,12 @@ const createProduct = async (req, res) => {
 
 // @desc Get all products
 // @route GET /api/products
-
 const getProducts = async (req, res) => {
   try {
     const { search, category } = req.query;
 
     const filter = {};
 
-    // Search by product title
     if (search) {
       filter.title = {
         $regex: search,
@@ -56,16 +56,63 @@ const getProducts = async (req, res) => {
       };
     }
 
-    // Filter by category
     if (category && category !== 'All') {
       filter.category = category;
     }
 
-    const products = await Product.find(filter)
-      .populate('seller', 'name email')
-      .sort({ createdAt: -1 });
+    const products = await Product.aggregate([
+      {
+        $match: filter,
+      },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: '_id',
+          foreignField: 'product',
+          as: 'reviews',
+        },
+      },
+      {
+        $addFields: {
+          reviewCount: {
+            $size: '$reviews',
+          },
+          averageRating: {
+            $cond: [
+              {
+                $gt: [
+                  {
+                    $size: '$reviews',
+                  },
+                  0,
+                ],
+              },
+              {
+                $avg: '$reviews.rating',
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          reviews: 0,
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+    ]);
 
-    res.json(products);
+    const populatedProducts = await Product.populate(products, {
+      path: 'seller',
+      select: 'name email',
+    });
+
+    res.json(populatedProducts);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -75,18 +122,61 @@ const getProducts = async (req, res) => {
 // @desc Get single product
 
 const getProductById = async (req, res) => {
-  console.log('❌ getProductById called with:', req.params.id);
   try {
-    const product = await Product.findById(req.params.id).populate(
-      'seller',
-      'name email'
-    );
+    const products = await Product.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: '_id',
+          foreignField: 'product',
+          as: 'reviews',
+        },
+      },
+      {
+        $addFields: {
+          reviewCount: {
+            $size: '$reviews',
+          },
+          averageRating: {
+            $cond: [
+              {
+                $gt: [
+                  {
+                    $size: '$reviews',
+                  },
+                  0,
+                ],
+              },
+              {
+                $avg: '$reviews.rating',
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          reviews: 0,
+        },
+      },
+    ]);
 
-    if (!product) {
+    if (!products.length) {
       return res.status(404).json({
         message: 'Product not found',
       });
     }
+
+    const product = await Product.populate(products[0], {
+      path: 'seller',
+      select: 'name email',
+    });
 
     res.json(product);
   } catch (error) {
@@ -160,7 +250,7 @@ const getMyProducts = async (req, res) => {
   try {
     const products = await Product.find({
       seller: req.user.id,
-    }).populate('seller', 'name email');
+    }).populate('seller', 'name email createdAt')
 
     res.json(products);
   } catch (error) {
