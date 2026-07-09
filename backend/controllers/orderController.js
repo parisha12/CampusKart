@@ -25,12 +25,21 @@ const placeOrder = async (req, res) => {
       0
     );
 
+    const { paymentMethod } = req.body;
+
+    if (!paymentMethod) {
+      return res.status(400).json({
+        message: 'Payment method is required',
+      });
+    }
+
     const order = await Order.create({
       buyer: req.user.id,
       items,
       totalAmount,
+      paymentMethod,
+      paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Pending',
     });
-
     // Clear cart after placing order
     await Cart.deleteMany({ user: req.user.id });
 
@@ -183,10 +192,66 @@ const cancelOrder = async (req, res) => {
     });
   }
 };
+// Payment Success
+const paymentSuccess = async (req, res) => {
+  try {
+    const { transactionId } = req.body;
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found',
+      });
+    }
+
+    order.paymentStatus = 'Paid';
+    order.transactionId = transactionId;
+
+    await order.save();
+
+    res.json({
+      message: 'Payment successful',
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// Payment Failed
+const paymentFailed = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found',
+      });
+    }
+
+    order.paymentStatus = 'Failed';
+
+    await order.save();
+
+    res.json({
+      message: 'Payment failed',
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   placeOrder,
   getMyOrders,
   getSellerOrders,
   updateOrderStatus,
   cancelOrder,
+  paymentSuccess,
+  paymentFailed,
 };

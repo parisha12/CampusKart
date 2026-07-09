@@ -16,7 +16,7 @@ function Products() {
         const data = await getProducts();
         setProducts(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 

@@ -7,6 +7,8 @@ const {
   getSellerOrders,
   updateOrderStatus,
   cancelOrder,
+  paymentSuccess,
+  paymentFailed,
 } = require('../controllers/orderController');
 
 const protect = require('../middleware/authMiddleware');
@@ -15,6 +17,8 @@ const protect = require('../middleware/authMiddleware');
 router.post('/', protect, placeOrder);
 router.get('/my-orders', protect, getMyOrders);
 router.put('/cancel/:id', protect, cancelOrder);
+router.put('/:id/payment-success', protect, paymentSuccess);
+router.put('/:id/payment-failed', protect, paymentFailed);
 
 // Seller
 router.get('/seller-orders', protect, getSellerOrders);

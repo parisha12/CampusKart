@@ -19,7 +19,7 @@ router.post('/', protect, createProduct);
 // Get All Products
 router.get('/', getProducts);
 
-console.log('✅ productRoutes loaded');
+
 // Get Logged-in Seller Products
 router.get('/my-products', protect, getMyProducts);
 

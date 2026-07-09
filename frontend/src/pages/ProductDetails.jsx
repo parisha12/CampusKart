@@ -35,7 +35,7 @@ function ProductDetails() {
 
         setProduct(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
 
         setError('Failed to load product');
       }
@@ -57,7 +57,7 @@ function ProductDetails() {
 
         setWishlisted(data.wishlisted);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
@@ -73,7 +73,7 @@ function ProductDetails() {
 
         setRelatedProducts(filtered.slice(0, 4));
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 

@@ -38,14 +38,14 @@ const Login = () => {
     // Clear old errors
     setErrors({});
     try {
-      console.log('Sending request...');
+     
 
       const response = await api.post('/auth/login', {
         email,
         password,
       });
 
-      console.log('Login response:', response.data);
+      
 
       alert(response.data.message);
 
@@ -59,7 +59,7 @@ const Login = () => {
         navigate('/profile');
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       alert(error.response?.data?.message || 'Login failed');
     }
@@ -90,6 +90,7 @@ const Login = () => {
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
               )}
+
             </div>
           </div>
 

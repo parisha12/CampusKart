@@ -9,7 +9,7 @@ export const uploadImage = async (file) => {
 
   const response = await axios.post(API_URL, formData);
 
-  console.log('Upload API Response:', response.data);
+  
 
   return response.data;
 };

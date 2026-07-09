@@ -6,6 +6,7 @@ import {
   FaFileAlt,
   FaBoxOpen,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   {
@@ -41,6 +42,12 @@ const categories = [
 ];
 
 function Categories() {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/?category=${categoryName}#products`);
+  };
+
   return (
     <section className="max-w-7xl mx-auto py-16 px-6">
       <h2 className="text-3xl font-bold text-center mb-10">
@@ -51,10 +58,14 @@ function Categories() {
         {categories.map((category) => (
           <div
             key={category.id}
+            onClick={() => handleCategoryClick(category.name)}
             className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center cursor-pointer hover:shadow-xl hover:-translate-y-1 transition"
           >
             {category.icon}
-            <h3 className="mt-4 font-semibold">{category.name}</h3>
+
+            <h3 className="mt-4 font-semibold">
+              {category.name}
+            </h3>
           </div>
         ))}
       </div>

@@ -18,6 +18,18 @@ function Navbar() {
         <input
           type="text"
           placeholder="Search products..."
+          value={
+            new URLSearchParams(window.location.search).get('search') || ''
+          }
+          onChange={(e) => {
+            const value = e.target.value;
+
+            if (value.trim()) {
+              navigate(`/?search=${value}#products`);
+            } else {
+              navigate('/#products');
+            }
+          }}
           className="border rounded-lg px-4 py-2 w-96 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
@@ -29,10 +41,6 @@ function Navbar() {
 
           {user ? (
             <>
-              <Link to="/profile" className="hover:text-blue-600">
-                Profile
-              </Link>
-
               {/* Buyer Links */}
               {user.role === 'student' && (
                 <>

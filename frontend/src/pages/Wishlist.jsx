@@ -15,7 +15,7 @@ const Wishlist = () => {
       const data = await getWishlist();
       setWishlist(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -35,7 +35,7 @@ const Wishlist = () => {
 
       toast.success('Removed from wishlist ❤️');
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error('Failed to remove item');
     } finally {
       setLoadingId(null);
@@ -56,7 +56,7 @@ const Wishlist = () => {
 
       toast.success('Moved to cart 🛒');
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error('Failed to move to cart');
     } finally {
       setLoadingId(null);

@@ -19,6 +19,8 @@ import Wishlist from './pages/Wishlist';
 import MyOrders from './pages/MyOrders';
 import SellerOrders from './pages/SellerOrders';
 import SellerStore from './pages/SellerStore';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailed from './pages/PaymentFailed';
 
 function App() {
   return (
@@ -80,6 +82,8 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/seller-orders" element={<SellerOrders />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failed" element={<PaymentFailed />} />
       </Routes>
     </Layout>
   );

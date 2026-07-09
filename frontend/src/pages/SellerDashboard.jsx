@@ -21,10 +21,10 @@ const SellerDashboard = () => {
 
   const [products, setProducts] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-
-  const [editId, setEditId] = useState(null);
 
   const handleChange = (e) => {
     setProduct({
@@ -36,12 +36,9 @@ const SellerDashboard = () => {
   const fetchProducts = async () => {
     try {
       const data = await getMyProducts();
-
-      console.log(data);
-
       setProducts(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -64,29 +61,21 @@ const SellerDashboard = () => {
 
         const uploadData = await uploadImage(imageFile);
 
-        console.log('UPLOAD RESPONSE:', uploadData);
-
         imageUrl = uploadData.imageUrl;
       }
-      console.log('Uploaded Image URL:', imageUrl);
+
       const updatedProduct = {
         ...product,
         image: imageUrl,
       };
 
-      let data;
-
       if (editMode) {
-        data = await updateProduct(editId, updatedProduct);
+        await updateProduct(editId, updatedProduct);
+        alert('Product updated successfully');
       } else {
-        data = await createProduct(updatedProduct);
+        await createProduct(updatedProduct);
+        alert('Product added successfully');
       }
-
-      console.log(data);
-
-      alert(
-        editMode ? 'Product updated successfully' : 'Product added successfully'
-      );
 
       setProduct({
         title: '',
@@ -105,28 +94,24 @@ const SellerDashboard = () => {
 
       fetchProducts();
     } catch (error) {
-      console.log(error);
-
+      console.error(error);
       alert(editMode ? 'Failed to update product' : 'Failed to add product');
     } finally {
       setUploading(false);
     }
   };
 
-  // Delete Product
   const handleDelete = async (id) => {
     try {
       await deleteProduct(id);
-
       alert('Product deleted successfully');
-
       fetchProducts();
     } catch (error) {
-      console.log(error);
-
+      console.error(error);
       alert('Failed to delete product');
     }
   };
+
   const handleEdit = (item) => {
     setProduct({
       title: item.title,
@@ -140,7 +125,6 @@ const SellerDashboard = () => {
     });
 
     setEditId(item._id);
-
     setEditMode(true);
   };
 
@@ -151,8 +135,6 @@ const SellerDashboard = () => {
       <p className="mt-4 text-gray-600">
         Manage your products, add new items, and track sales.
       </p>
-
-      {/* Add Product Form */}
 
       <div className="mt-8 max-w-xl">
         <h2 className="text-2xl font-semibold mb-4">
@@ -167,10 +149,11 @@ const SellerDashboard = () => {
           <input
             type="text"
             name="title"
-            placeholder="Product title"
+            placeholder="Product Title"
             value={product.title}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           />
 
           <textarea
@@ -178,7 +161,8 @@ const SellerDashboard = () => {
             placeholder="Description"
             value={product.description}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           />
 
           <input
@@ -187,7 +171,8 @@ const SellerDashboard = () => {
             placeholder="Price"
             value={product.price}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           />
 
           <input
@@ -196,14 +181,16 @@ const SellerDashboard = () => {
             placeholder="Category"
             value={product.category}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           />
 
           <select
             name="condition"
             value={product.condition}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           >
             <option value="">Select Condition</option>
             <option value="new">New</option>
@@ -215,19 +202,43 @@ const SellerDashboard = () => {
             name="type"
             value={product.type}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           >
             <option value="">Select Type</option>
             <option value="sell">Sell</option>
             <option value="rent">Rent</option>
             <option value="exchange">Exchange</option>
           </select>
+
+          {/* Image URL */}
+          <input
+            type="text"
+            name="image"
+            placeholder="Paste Image URL (Unsplash etc.)"
+            value={product.image}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
+
+          <p className="text-center text-gray-500">OR</p>
+
+          {/* Upload Image */}
           <input
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
           />
+
+          {/* Preview */}
+          {product.image && (
+            <img
+              src={product.image}
+              alt="Preview"
+              className="w-full h-48 object-cover rounded border"
+            />
+          )}
 
           <input
             type="text"
@@ -235,19 +246,23 @@ const SellerDashboard = () => {
             placeholder="Location"
             value={product.location}
             onChange={handleChange}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded"
+            required
           />
 
           <button
             type="submit"
-            className="bg-green-600 text-white px-5 py-2 rounded"
+            disabled={uploading}
+            className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
           >
-            {editMode ? 'Update Product' : 'Add Product'}
+            {uploading
+              ? 'Uploading...'
+              : editMode
+                ? 'Update Product'
+                : 'Add Product'}
           </button>
         </form>
       </div>
-
-      {/* My Products */}
 
       <div className="mt-12">
         <h2 className="text-2xl font-semibold mb-6">My Products</h2>
@@ -277,11 +292,8 @@ const SellerDashboard = () => {
                 <p className="font-semibold mt-2">Price: Rs. {item.price}</p>
 
                 <p>Category: {item.category}</p>
-
                 <p>Condition: {item.condition}</p>
-
                 <p>Type: {item.type}</p>
-
                 <p>Location: {item.location}</p>
 
                 <button

@@ -2,12 +2,14 @@ import axios from 'axios';
 
 const API = 'http://localhost:5000/api/orders';
 
-export const placeOrder = async () => {
+export const placeOrder = async (paymentMethod) => {
   const token = localStorage.getItem('token');
 
   const response = await axios.post(
     API,
-    {},
+    {
+      paymentMethod,
+    },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -17,6 +19,7 @@ export const placeOrder = async () => {
 
   return response.data;
 };
+
 export const getMyOrders = async () => {
   const token = localStorage.getItem('token');
 
@@ -70,4 +73,27 @@ export const cancelOrder = async (id) => {
   );
 
   return response.data;
+};
+export const initiateEsewaPayment = async (orderId) => {
+  const token = localStorage.getItem('token');
+
+  try {
+    const response = await axios.post(
+      'http://localhost:5000/api/payment/esewa/initiate',
+      {
+        orderId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log('PAYMENT ERROR:', error.response?.data);
+
+    throw error;
+  }
 };
